@@ -1,12 +1,12 @@
 /**
  *    Copyright 2009-2021 the original author or authors.
- *
+ * <p>
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *
+ * <p>
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -84,27 +84,27 @@ public class XMLConfigBuilder extends BaseBuilder {
    * @param props:用于保存我们从xml中解析出来的属性
    */
   public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
-    /**
-     * 该方法做了二个事情
-     * 第一件事情:创建XPathParser 解析器对象,在这里会把我们的
-     * 把我们的mybatis-config.xml解析出一个Document对象
-     * 第二节事情:调用重写的构造函数来构建我XMLConfigBuilder
+    /*
+      该方法做了二个事情
+      第一件事情:创建XPathParser 解析器对象,在这里会把我们的
+      把我们的mybatis-config.xml解析出一个Document对象
+      第二节事情:调用重写的构造函数来构建我XMLConfigBuilder
      */
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
 
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
-    /**
-     * 调用父类的BaseBuilder的构造方法:给
-     * configuration赋值
-     * typeAliasRegistry别名注册器赋值
-     * TypeHandlerRegistry赋值
+    /*
+      调用父类的BaseBuilder的构造方法:给
+      configuration赋值
+      typeAliasRegistry别名注册器赋值
+      TypeHandlerRegistry赋值
      */
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
-    /**
-     * 把props绑定到configuration的props属性上
+    /*
+      把props绑定到configuration的props属性上
      */
     this.configuration.setVariables(props);
     this.parsed = false;
@@ -132,25 +132,20 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 方法实现说明:解析我们mybatis-config.xml的 configuration节点
-   * @author:xsls
-   * @param root:configuration节点对象
-   * @return:
-   * @exception:
-   * @date:2019/8/30 15:57
    */
   private void parseConfiguration(XNode root) {
     try {
-      /**
-       * 解析 properties节点
-       *     <properties resource="mybatis/db.properties" />
-       *     解析到org.apache.ibatis.parsing.XPathParser#variables
-       *           org.apache.ibatis.session.Configuration#variables
+      /*
+        解析 properties节点
+            <properties resource="mybatis/db.properties" />
+            解析到org.apache.ibatis.parsing.XPathParser#variables
+                  org.apache.ibatis.session.Configuration#variables
        */
       propertiesElement(root.evalNode("properties"));
-      /**
-       * 解析我们的 mybatis-config.xml 中的settings节点
-       * 具体可以配置哪些属性 :http://www.mybatis.org/mybatis-3/zh/configuration.html#settings
-       * <settings>
+      /*
+        解析我们的 mybatis-config.xml 中的settings节点
+        具体可以配置哪些属性 :http://www.mybatis.org/mybatis-3/zh/configuration.html#settings
+        <settings>
             <setting name="cacheEnabled" value="true"/>
             <setting name="lazyLoadingEnabled" value="true"/>
            <setting name="mapUnderscoreToCamelCase" value="false"/>
@@ -158,38 +153,38 @@ public class XMLConfigBuilder extends BaseBuilder {
            <setting name="jdbcTypeForNull" value="OTHER"/>
             ..............
            </settings>
-       *
+
        */
       Properties settings = settingsAsProperties(root.evalNode("settings"));
-      /**
-       * 基本没有用过该属性
-       * VFS含义是虚拟文件系统；主要是通过程序能够方便读取本地文件系统、FTP文件系统等系统中的文件资源。
+      /*
+        基本没有用过该属性
+        VFS含义是虚拟文件系统；主要是通过程序能够方便读取本地文件系统、FTP文件系统等系统中的文件资源。
          Mybatis中提供了VFS这个配置，主要是通过该配置可以加载自定义的虚拟文件系统应用程序
          解析到：org.apache.ibatis.session.Configuration#vfsImpl
        */
       loadCustomVfs(settings);
-      /**
-       * 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。
-       * SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING
-       * 解析到org.apache.ibatis.session.Configuration#logImpl
+      /*
+        指定 MyBatis 所用日志的具体实现，未指定时将自动查找。
+        SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING
+        解析到org.apache.ibatis.session.Configuration#logImpl
        */
       loadCustomLogImpl(settings);
-      /**
-       * 解析我们的别名
-       * <typeAliases>
-           <typeAlias alias="Author" type="cn.tulingxueyuan.pojo.Author"/>
+      /*
+        解析我们的别名
+        <typeAliases>
+           <typeAlias alias="Author" type="cn.use.pojo.Author"/>
         </typeAliases>
        <typeAliases>
-          <package name="cn.tulingxueyuan.pojo"/>
+          <package name="cn.use.pojo"/>
        </typeAliases>
-       解析到oorg.apache.ibatis.session.Configuration#typeAliasRegistry.typeAliases
+       解析到org.apache.ibatis.session.Configuration#typeAliasRegistry.typeAliases
        除了自定义的，还有内置的
        */
       typeAliasesElement(root.evalNode("typeAliases"));
-      /**
-       * 解析我们的插件(比如分页插件)
-       * mybatis自带的
-       * Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
+      /*
+        解析我们的插件(比如分页插件)
+        mybatis自带的
+        Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
          ParameterHandler (getParameterObject, setParameters)
          ResultSetHandler (handleResultSets, handleOutputParameters)
          StatementHandler (prepare, parameterize, batch, update, query)
@@ -197,10 +192,10 @@ public class XMLConfigBuilder extends BaseBuilder {
        */
       pluginElement(root.evalNode("plugins"));
 
-      /**
-       * 可以配置  一般不会去设置
-       * 对象工厂 用于反射实例化对象、对象包装工厂、
-       * 反射工厂 用于属性和setter/getter 获取
+      /*
+        可以配置  一般不会去设置
+        对象工厂 用于反射实例化对象、对象包装工厂、
+        反射工厂 用于属性和setter/getter 获取
        */
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
@@ -209,8 +204,8 @@ public class XMLConfigBuilder extends BaseBuilder {
       // 设置settings 和默认值到configuration
       settingsElement(settings);
 
-      /**
-       * 解析我们的mybatis环境
+      /*
+        解析我们的mybatis环境
          <environments default="dev">
            <environment id="dev">
              <transactionManager type="JDBC"/>
@@ -232,32 +227,32 @@ public class XMLConfigBuilder extends BaseBuilder {
            </dataSource>
          </environment>
        </environments>
-       *  解析到：org.apache.ibatis.session.Configuration#environment
-       *  在集成spring情况下由 spring-mybatis提供数据源 和事务工厂
+         解析到：org.apache.ibatis.session.Configuration#environment
+         在集成spring情况下由 spring-mybatis提供数据源 和事务工厂
        */
       environmentsElement(root.evalNode("environments"));
-      /**
-       * 解析数据库厂商
-       *     <databaseIdProvider type="DB_VENDOR">
+      /*
+        解析数据库厂商
+            <databaseIdProvider type="DB_VENDOR">
                 <property name="SQL Server" value="sqlserver"/>
                 <property name="DB2" value="db2"/>
                 <property name="Oracle" value="oracle" />
                 <property name="MySql" value="mysql" />
              </databaseIdProvider>
-       *  解析到：org.apache.ibatis.session.Configuration#databaseId
+         解析到：org.apache.ibatis.session.Configuration#databaseId
        */
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
-      /**
-       * 解析我们的类型处理器节点
-       * <typeHandlers>
+      /*
+        解析我们的类型处理器节点
+        <typeHandlers>
             <typeHandler handler="org.mybatis.example.ExampleTypeHandler"/>
           </typeHandlers>
           解析到：org.apache.ibatis.session.Configuration#typeHandlerRegistry.typeHandlerMap
        */
       typeHandlerElement(root.evalNode("typeHandlers"));
-      /**
-       * 最最最最最重要的就是解析我们的mapper
-       *
+      /*
+        最最最最最重要的就是解析我们的mapper
+
        resource：来注册我们的class类路径下的
        url:来指定我们磁盘下的或者网络资源的
        class:
@@ -272,8 +267,8 @@ public class XMLConfigBuilder extends BaseBuilder {
             <package name="com.tuling.mapper"></package>
           -->
        </mappers>
-       * package
-       *     ·解析mapper接口代理工厂（传入需要代理的接口） 解析到：org.apache.ibatis.session.Configuration#mapperRegistry.knownMappers
+        package
+            ·解析mapper接口代理工厂（传入需要代理的接口） 解析到：org.apache.ibatis.session.Configuration#mapperRegistry.knownMappers
              ·解析mapper.xml  最终解析成MappedStatement 到：org.apache.ibatis.session.Configuration#mappedStatements
        */
       mapperElement(root.evalNode("mappers"));
@@ -520,59 +515,54 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 方法实现说明
-   * @author:xsls
-   * @param parent:mappers
-   * @return:
-   * @exception:
-   * @date:2019/8/30 16:32
    */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
-      /**
-       * 获取我们mappers节点下的一个一个的mapper节点
+      /*
+        获取我们mappers节点下的一个一个的mapper节点
        */
       for (XNode child : parent.getChildren()) {
-        /**
-         * 判断我们mapper是不是通过批量注册的
-         * <package name="com.tuling.mapper"></package>
+        /*
+          判断我们mapper是不是通过批量注册的
+          <package name="com.tuling.mapper"></package>
          */
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
         } else {
-          /**
-           * 判断从classpath下读取我们的mapper
-           * <mapper resource="mybatis/mapper/EmployeeMapper.xml"/>
+          /*
+            判断从classpath下读取我们的mapper
+            <mapper resource="mybatis/mapper/EmployeeMapper.xml"/>
            */
           String resource = child.getStringAttribute("resource");
-          /**
-           * 判断是不是从我们的网络资源读取(或者本地磁盘得)
-           * <mapper url="D:/mapper/EmployeeMapper.xml"/>
+          /*
+            判断是不是从我们的网络资源读取(或者本地磁盘得)
+            <mapper url="D:/mapper/EmployeeMapper.xml"/>
            */
           String url = child.getStringAttribute("url");
-          /**
-           * 解析这种类型(要求接口和xml在同一个包下)
-           * <mapper class="com.tuling.mapper.DeptMapper"></mapper>
-           *
+          /*
+            解析这种类型(要求接口和xml在同一个包下)
+            <mapper class="com.tuling.mapper.DeptMapper"></mapper>
+
            */
           String mapperClass = child.getStringAttribute("class");
 
-          /**
-           * 我们得mappers节点只配置了
-           * <mapper resource="mybatis/mapper/EmployeeMapper.xml"/>
+          /*
+            我们得mappers节点只配置了
+            <mapper resource="mybatis/mapper/EmployeeMapper.xml"/>
            */
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
-            /**
-             * 把我们的文件读取出一个流
+            /*
+              把我们的文件读取出一个流
              */
             InputStream inputStream = Resources.getResourceAsStream(resource);
-            /**
-             * 创建读取XmlMapper构建器对象,用于来解析我们的mapper.xml文件
+            /*
+              创建读取XmlMapper构建器对象,用于来解析我们的mapper.xml文件
              */
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
-            /**
-             * 真正的解析我们的mapper.xml配置文件(说白了就是来解析我们的sql)
+            /*
+              真正的解析我们的mapper.xml配置文件(说白了就是来解析我们的sql)
              */
             mapperParser.parse();
           } else if (resource == null && url != null && mapperClass == null) {

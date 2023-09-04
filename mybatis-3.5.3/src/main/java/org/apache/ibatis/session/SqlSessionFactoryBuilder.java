@@ -44,7 +44,7 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
-  public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
+  public SqlSessionFactory  build(Reader reader, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
       return build(parser.parse());
